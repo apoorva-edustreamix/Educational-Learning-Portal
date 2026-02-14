@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EDUSTREAMIX - B.Com Semester 6</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo-section">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" class="grad-icon">
+        <h1>EDUSTREAMIX</h1>
+        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995620.png" class="grad-icon">
+    </div>
+    <p>Professional Learning Portal – B.Com Semester 6</p>
+</header>
+
+<section id="groupsSection" class="section active">
+    <h2>Select Your Group</h2>
+    <div id="groups" class="card-container"></div>
+</section>
+
+<section id="subjectsSection" class="section">
+    <h2>Select Subject</h2>
+    <button class="back-btn" onclick="goBack('groupsSection')">← Back</button>
+    <div id="subjects" class="card-container"></div>
+</section>
+
+<section id="sectionsSection" class="section">
+    <h2>Select Section</h2>
+    <button class="back-btn" onclick="goBack('subjectsSection')">← Back</button>
+    <div id="sections" class="card-container"></div>
+</section>
+
+<section id="linksSection" class="section">
+    <h2>Open YouTube Playlist</h2>
+    <button class="back-btn" onclick="goBack('sectionsSection')">← Back</button>
+    <div id="links" class="card-container"></div>
+</section>
+
+<footer>
+    <p>© 2026 EDUSTREAMIX | Designed for Professional Commerce Learning</p>
+</footer>
+
+<script src="data.js"></script>
+
+<script>
+
+const groupsDiv = document.getElementById("groups");
+const subjectsDiv = document.getElementById("subjects");
+const sectionsDiv = document.getElementById("sections");
+const linksDiv = document.getElementById("links");
+
+function showSection(sectionId){
+    document.querySelectorAll(".section").forEach(sec=>{
+        sec.classList.remove("active");
+    });
+    document.getElementById(sectionId).classList.add("active");
+}
+
+function goBack(sectionId){
+    showSection(sectionId);
+}
+
+function createCard(text, clickFn){
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerText = text;
+    card.onclick = clickFn;
+    return card;
+}
+
+function showSubjects(group){
+    subjectsDiv.innerHTML="";
+    data[group].forEach(sub=>{
+        subjectsDiv.appendChild(
+            createCard(sub.name, ()=>showSections(sub))
+        );
+    });
+    showSection("subjectsSection");
+}
+
+function showSections(subject){
+    sectionsDiv.innerHTML="";
+    subject.channels.forEach(sec=>{
+        sectionsDiv.appendChild(
+            createCard(sec.name, ()=>showLinks(sec))
+        );
+    });
+    showSection("sectionsSection");
+}
+
+function showLinks(section){
+    linksDiv.innerHTML="";
+    section.links.forEach(link=>{
+        let a = document.createElement("a");
+        a.href = link;
+        a.target="_blank";
+        a.className="link-card";
+        a.innerText="▶ Open Playlist";
+        linksDiv.appendChild(a);
+    });
+    showSection("linksSection");
+}
+
+window.onload=function(){
+    for(let group in data){
+        groupsDiv.appendChild(
+            createCard(group, ()=>showSubjects(group))
+        );
+    }
+}
+
+</script>
+
+</body>
+</html>
