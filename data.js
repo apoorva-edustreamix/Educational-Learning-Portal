@@ -152,7 +152,7 @@ channels:[
 
 "B.Com Business Analytics - Semester 6": [
 ...commonLanguages,
-...commerceCore,
+...commerceCore.filter(subject => subject.name !== "Accounting Standards"),
 {
 name:"Business Application of Emerging Technologies",
 channels:[
