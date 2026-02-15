@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EDUSTREAMIX | B.Com Semester 6</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+<h1>EDUSTREAMIX</h1>
+<p>B.Com Semester 6 Learning Portal</p>
+</header>
+
+<div class="container">
+
+<!-- Groups -->
+<div id="groups" class="section active">
+<h2>Select Your Group</h2>
+<div class="card-container"></div>
+</div>
+
+<!-- Subjects -->
+<div id="subjects" class="section">
+<h2>Select Subject</h2>
+<div class="card-container"></div>
+<button class="back-btn" onclick="goBack('groups')">⬅ Back</button>
+</div>
+
+<!-- Sections -->
+<div id="sections" class="section">
+<h2>Select Section</h2>
+<div class="card-container"></div>
+<button class="back-btn" onclick="goBack('subjects')">⬅ Back</button>
+</div>
+
+<!-- Links -->
+<div id="links" class="section">
+<h2>YouTube Playlists</h2>
+<div class="card-container"></div>
+<button class="back-btn" onclick="goBack('sections')">⬅ Back</button>
+</div>
+
+</div>
+
+<footer>
+© 2026 EDUSTREAMIX | Professional Learning Portal
+</footer>
+
+<script src="data.js"></script>
+
+<script>
+
+const groupsDiv = document.querySelector("#groups .card-container");
+const subjectsDiv = document.querySelector("#subjects .card-container");
+const sectionsDiv = document.querySelector("#sections .card-container");
+const linksDiv = document.querySelector("#links .card-container");
+
+function showSection(id){
+document.querySelectorAll(".section").forEach(sec=>sec.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+function createCard(text, clickFn){
+let card = document.createElement("div");
+card.className = "card";
+card.innerText = text;
+card.onclick = clickFn;
+return card;
+}
+
+function showSubjects(group){
+subjectsDiv.innerHTML="";
+data[group].forEach(sub=>{
+subjectsDiv.appendChild(
+createCard(sub.name, ()=>showSections(sub))
+);
+});
+showSection("subjects");
+}
+
+function showSections(subject){
+sectionsDiv.innerHTML="";
+subject.channels.forEach(sec=>{
+sectionsDiv.appendChild(
+createCard(sec.name, ()=>showLinks(sec))
+);
+});
+showSection("sections");
+}
+
+function showLinks(section){
+linksDiv.innerHTML="";
+section.links.forEach(link=>{
+let a = document.createElement("a");
+a.href = link;
+a.target="_blank";
+a.className="link-card";
+a.innerText="▶ Open YouTube Playlist";
+linksDiv.appendChild(a);
+});
+showSection("links");
+}
+
+function goBack(id){
+showSection(id);
+}
+
+window.onload = function(){
+for(let group in data){
+groupsDiv.appendChild(
+createCard(group, ()=>showSubjects(group))
+);
+}
+}
+
+</script>
+
+</body>
+</html>
