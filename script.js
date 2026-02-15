@@ -1,67 +1,43 @@
-const courseSelect = document.getElementById("courseSelect");
-const subjectFilter = document.getElementById("subjectFilter");
-const content = document.getElementById("content");
+const container = document.getElementById("content");
 
-function loadCourses() {
-  data.courses.forEach(course => {
-    const option = document.createElement("option");
-    option.value = course.name;
-    option.textContent = course.name;
-    courseSelect.appendChild(option);
-  });
-}
+function renderData(data) {
+    const semesterCard = document.createElement("div");
+    semesterCard.className = "semester-card";
 
-function loadSubjects() {
-  Object.values(data.sharedSubjects).forEach(subject => {
-    const option = document.createElement("option");
-    option.value = subject.name;
-    option.textContent = subject.name;
-    subjectFilter.appendChild(option);
-  });
-}
+    semesterCard.innerHTML = `
+        <h2>${data.semester}</h2>
+        <p>${data.program}</p>
+        <div class="subject-grid"></div>
+    `;
 
-function render() {
-  const selectedCourse = courseSelect.value;
-  const selectedSubject = subjectFilter.value;
+    const grid = semesterCard.querySelector(".subject-grid");
 
-  content.innerHTML = "";
+    data.subjects.forEach(subject => {
+        const subjectCard = document.createElement("div");
+        subjectCard.className = "subject-card";
 
-  if (!selectedCourse) return;
+        let channelsHTML = "";
 
-  const course = data.courses.find(c => c.name === selectedCourse);
-
-  course.subjects.forEach(key => {
-    const subject = data.sharedSubjects[key];
-
-    if (selectedSubject && subject.name !== selectedSubject) return;
-
-    const card = document.createElement("div");
-    card.className = "subject-card";
-
-    card.innerHTML = `<h2>${subject.name}</h2>`;
-
-    if (subject.parts) {
-      subject.parts.forEach(part => {
-        card.innerHTML += `<h3>${part.title}</h3>`;
-        part.links.forEach(link => {
-          card.innerHTML += `<a href="${link}" target="_blank">Open Playlist</a>`;
+        subject.channels.forEach(channel => {
+            channel.links.forEach(link => {
+                channelsHTML += `
+                    <div class="playlist">
+                        <strong>${channel.name}</strong><br>
+                        <a href="${link}" target="_blank">Open Playlist</a>
+                    </div>
+                `;
+            });
         });
-      });
-    }
 
-    if (subject.whole) {
-      card.innerHTML += `<h3>Whole Subject</h3>`;
-      subject.whole.forEach(item => {
-        card.innerHTML += `<a href="${item.link}" target="_blank">${item.channel}</a>`;
-      });
-    }
+        subjectCard.innerHTML = `
+            <h3>${subject.name}</h3>
+            ${channelsHTML}
+        `;
 
-    content.appendChild(card);
-  });
+        grid.appendChild(subjectCard);
+    });
+
+    container.appendChild(semesterCard);
 }
 
-courseSelect.addEventListener("change", render);
-subjectFilter.addEventListener("change", render);
-
-loadCourses();
-loadSubjects();
+renderData(edustreamixData);
