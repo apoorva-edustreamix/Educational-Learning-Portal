@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EDUSTREAMIX | B.Com Semester 6</title>
+<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<!-- Splash Screen -->
+<div id="splash">
+    <div class="splash-content">
+        <h1 class="splash-logo">EDUSTREAMIX</h1>
+        <p class="splash-tag">Smart B.Com Semester 6 Learning</p>
+    </div>
+</div>
+
+<!-- Main App -->
+<div class="app-container hidden">
+
+<header class="app-header">
+<h1 class="logo">EDUSTREAMIX</h1>
+<p>Smart B.Com Semester 6 Learning</p>
+</header>
+
+<div id="groups" class="screen active"></div>
+<div id="subjects" class="screen"></div>
+<div id="channels" class="screen"></div>
+<div id="links" class="screen"></div>
+
+</div>
+
+<script src="data.js"></script>
+
+<script>
+
+/* ---------- SPLASH CONTROL ---------- */
+
+window.addEventListener("load", ()=>{
+    setTimeout(()=>{
+        document.getElementById("splash").classList.add("fade-out");
+        document.querySelector(".app-container").classList.remove("hidden");
+    },2500);
+});
+
+/* ---------- EXISTING APP LOGIC ---------- */
+
+const groupsDiv = document.getElementById("groups");
+const subjectsDiv = document.getElementById("subjects");
+const channelsDiv = document.getElementById("channels");
+const linksDiv = document.getElementById("links");
+
+const screens = document.querySelectorAll(".screen");
+
+let currentGroup = "";
+
+function switchScreen(screen){
+    screens.forEach(s=>{
+        s.classList.remove("active");
+        s.classList.add("slide-out");
+    });
+
+    setTimeout(()=>{
+        screens.forEach(s=>s.classList.remove("slide-out"));
+        screen.classList.add("active");
+    },200);
+}
+
+function createCard(text, icon, clickFn){
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+        <div class="icon">${icon}</div>
+        <div class="title">${text}</div>
+    `;
+    card.onclick = clickFn;
+    return card;
+}
+
+function addNavigationButtons(container, backFn){
+    const navDiv = document.createElement("div");
+    navDiv.className = "nav-buttons";
+
+    const backBtn = document.createElement("button");
+    backBtn.className = "nav-btn";
+    backBtn.innerText = "⬅ Back";
+    backBtn.onclick = backFn;
+
+    const exitBtn = document.createElement("button");
+    exitBtn.className = "nav-btn exit";
+    exitBtn.innerText = "❌ Exit";
+    exitBtn.onclick = () => switchScreen(groupsDiv);
+
+    navDiv.appendChild(backBtn);
+    navDiv.appendChild(exitBtn);
+
+    container.appendChild(navDiv);
+}
+
+function getSubjectIcon(name){
+    if(name.toLowerCase().includes("english")) return "📘";
+    if(name.toLowerCase().includes("telugu")) return "📗";
+    if(name.toLowerCase().includes("hindi")) return "📙";
+    if(name.toLowerCase().includes("sanskrit")) return "📕";
+    if(name.toLowerCase().includes("accounting")) return "📊";
+    if(name.toLowerCase().includes("gst")) return "💼";
+    if(name.toLowerCase().includes("research")) return "📝";
+    if(name.toLowerCase().includes("finance")) return "💰";
+    if(name.toLowerCase().includes("cyber")) return "🛡";
+    if(name.toLowerCase().includes("technology")) return "💻";
+    return "🎓";
+}
+
+function showSubjects(group){
+    subjectsDiv.innerHTML = "<h2>Select Subject</h2>";
+    data[group].forEach(sub=>{
+        subjectsDiv.appendChild(
+            createCard(sub.name, getSubjectIcon(sub.name), ()=>showChannels(sub))
+        );
+    });
+    addNavigationButtons(subjectsDiv, ()=>switchScreen(groupsDiv));
+    switchScreen(subjectsDiv);
+}
+
+function showChannels(subject){
+    channelsDiv.innerHTML = "<h2>Select Channel</h2>";
+    subject.channels.forEach(channel=>{
+        channelsDiv.appendChild(
+            createCard(channel.name, "📺", ()=>showLinks(channel, subject))
+        );
+    });
+    addNavigationButtons(channelsDiv, ()=>showSubjects(currentGroup));
+    switchScreen(channelsDiv);
+}
+
+function showLinks(channel, subject){
+    linksDiv.innerHTML = "<h2>Open Playlist</h2>";
+    channel.links.forEach(link=>{
+        let a = document.createElement("a");
+        a.href = link;
+        a.target = "_blank";
+        a.className = "playlist-btn";
+        a.innerText = "▶ Watch on YouTube";
+        linksDiv.appendChild(a);
+    });
+    addNavigationButtons(linksDiv, ()=>showChannels(subject));
+    switchScreen(linksDiv);
+}
+
+window.onload = function(){
+    groupsDiv.innerHTML = "<h2>Select Group</h2>";
+    for(let group in data){
+        groupsDiv.appendChild(
+            createCard(group, "🎓", ()=>{
+                currentGroup = group;
+                showSubjects(group);
+            })
+        );
+    }
+};
+
+</script>
+
+</body>
+</html>
